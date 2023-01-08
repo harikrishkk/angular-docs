@@ -1,7 +1,11 @@
 {
-  "index": "Introduction",
-  "another": "Another Page",
-  "advanced": "Advanced (A Folder)",
+  "index": "Intro",
+  "install": "Installation",
+  "basics" : "Component basics",
+  "bindings" : "Component Bindings",
+  "directives-component-communication" : "Directives & Component Communication",
+  "view-encapsulation" : "View Encapsulation", 
+  "template-reference" : "Template Reference",
   "about": {
     "title": "About",
     "type": "page"

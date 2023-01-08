@@ -1,0 +1,40 @@
+# Installing Angular CLI & walkthrough
+
+```
+npm install -g @angular/cli
+```
+
+If using mac, you may need to use `sudo` at the start
+
+If you are within a office/corporate environment, you may need admin rights to do the same.
+Reach out to the Tech support or raise a request to have temporary admin access.
+
+#### To create an angular application
+
+```
+ng new my-app-name
+```
+
+Once the installation is done, run the app by the command `ng serve` and the application will be
+up and running in port 4200 by default.
+
+In terminal
+
+![terminal](/images/terminal.png)
+
+Open the browser under this url
+
+```
+http://localhost:4200/
+```
+
+The home page will look something like this. It may change depending on when you see this though.
+
+![home page](/images/home.png)
+
+If you open the "View Page Source", it should look something like this
+
+![view page source](/images/page-source.png)
+
+which if you wonder, doesnt look like the screenshot you saw as the landing page.
+This is what SPA does. The initial load just bring in this much only, and th whole application is rendered within `<app-root></app-root>` tag which you see above. See the explanation of the same in the next section.

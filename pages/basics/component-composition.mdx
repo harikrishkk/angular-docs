@@ -1,0 +1,85 @@
+# Component compostion
+
+We no longer see a page as a page, but we see tham as a bunch of re-usable components.
+See the image below. We divide the page as a bunch of (nested) components 
+
+That's where the idea of composition comes into the picture. 
+
+#### You think about 
+
+- making the leanest possible component, 
+- how can you customize them, 
+- what all inputs can be passed, what all outputs need to be provided
+- how will component communicate with each other.
+- configure them, 
+- reuse them 
+- test them
+
+That's what Single responsibility principle says. A component should ideally do just one thing, and one thing only. If it does more than one thing, then better split them into another component.
+
+
+![component composition](/images/composition.png)
+
+## Modules 
+
+In angular modules are basically wrappers that bundle the components into packages. Note, there is something called typescript module too, which is not what i mean when i say "module" here in this context. 
+
+Module becomes more important when we discuss about `lazy loading` towards the end where we discuss about optimizations. For better loading times, we keep the main app module lean, and thin, and via routing, we load subsequent portions of the application upon clicking the link which then loads its code as a small chunk ( ie bundle of js which is a small file which you can see in the **Inspect / Network** section ) and navigates to that part of the application. 
+
+When the app grows, it becomes important to split them into meaningful modules so that we bundle the logic within respective modules and load them on demand. Don't just keep stuffing the app module with more and more logic. That hampers loading time, performance & peace. 
+
+Understand that the whole angular functionalities has been split between various modules.
+If you take a look at the package.json, we see many package dependencies. Each package holds certain logic which we use it via registering them within the `imports: []` of the module when needed. 
+
+```js
+"dependencies": {
+    "@angular/animations": "^15.0.0", // 👈  all animation logic is within this module
+    "@angular/common": "^15.0.0", // 👈  common component logic is here 
+    "@angular/compiler": "^15.0.0", 
+    "@angular/core": "^15.0.0", // 👈  core angular functionality here
+    "@angular/forms": "^15.0.0", // 👈  forms related logic here
+    "@angular/platform-browser": "^15.0.0",
+    "@angular/platform-browser-dynamic": "^15.0.0",
+    "@angular/router": "^15.0.0",// 👈  routing logic here
+```
+
+## Adding a new component 
+
+I use stackblitz for live code so that you get to see live previews of whatever we are learning.
+This helps you from jumping into other IDEs, having npm install issues, "_works in yours but not mine_" issues etc. If you want to code along in an editor, feel free to do so. I dont want anyone to miss out on the code. Hence using stackblitz as an embed. 
+
+Styling is done using bootstrap 5. Note that styling isnt our priority.
+So, the point is explaning a concept in the least amount of code so that you get to understand the fundamentals and concepts within. 
+
+if you like to open the stackblitz editor in a sepeare browser, click [here](https://stackblitz.com/edit/angular-ivy-ajflut?embed=1&file=src/app/app.module.ts). You may need to login with google/github account though 
+
+Or else the embedded version below. if you like to play around, feel free to fork it. 
+Select the "Both" tab if you wish to see it side by side. 
+
+<iframe width="100%" height="500" src="https://stackblitz.com/edit/angular-ivy-ajflut?file=src/app/app.module.ts"></iframe>
+
+#### Explanation
+
+In stackblitz, on the file explorer, if we right click, we get a menu called "Angular Generator" which helps to scaffold components, modules, services, directives, pipes etc. If you use VS code, there is an equivalent extension called "**Angular Schematics**". Other 2 VS code extensions worth recommending is **Angular Essentials** from John Papa, and **Angular Language Service** along with Prettier.
+If you are a fan of command line, then there is a cheat sheet which i found online [here](https://www.digitalocean.com/community/tutorials/angular-angular-cli-reference) 
+
+Nothing huge here, we added a `BannerComponent`, registered it in the `AppModule` and within it in the `declarations` array and used the selector in `app.component.html`
+
+As of now, there is nothing dynamic. The HTML of banner is just a static piece. We will bring interactivity into it. The HTML inside of the component contains few bootstrap classes for styling. That's all. Try to track the wiring up of the component in your mind. As we move forward, we will see more complex and advanced concepts. So start preparing for that now. 
+
+Note: we dont need the `.ts` extension when we import. That is added automatically by webpack.
+
+```js
+import { BannerComponent } from './banner/banner.component'; // 👈  no .ts extension here
+
+@NgModule({
+  declarations: [ BannerComponent],
+  bootstrap: [AppComponent],
+})
+```
+
+### Is template a must for a component? (📚)
+
+Yes, it is. A component is also a directive, but it should have a template. 
+But what exactly is a directive? We will see in detail when we discuss about directive.
+

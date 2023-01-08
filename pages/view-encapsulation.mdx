@@ -1,0 +1,74 @@
+# View Encapsulation
+
+Usually, the styles which we write for a component should be scoped to it.
+With ViewEncapsulation, we can choose the component styles to be scoped to itself, or make it bleed out.
+
+In styles.css
+
+```
+p {
+  color: blue;
+}
+
+```
+
+We have added a style for paragraph within our card component
+
+```js
+p {
+    color: red;
+}
+```
+
+[Stackblitz code](https://stackblitz.com/edit/angular-ivy-2yxzrr?file=src/app/card/card.component.ts)
+
+#### Stackblitz Embed
+
+<iframe
+  width="100%"
+  height="500"
+  src="https://stackblitz.com/edit/angular-ivy-2yxzrr?file=src/app/card/card.component.ts"
+></iframe>
+
+#### Explanation
+
+What we see now is, the inner paragraph within the card is red, outer one is blue.
+
+![View encapsulation](/images/ve1.png)
+
+If inspecting the inner paragraph in dev tools,
+
+```js
+p[_ngcontent-vaq-c44] {
+    color: red;
+}
+```
+
+the selector changed. Angular has added a random attribute making it more specific. This is intentional.
+A component shields itself from outside styles so as they are not acceidentally overwritten.
+
+if we put
+
+```js
+  @Component({
+  selector: 'app-card',
+  templateUrl: './card.component.html',
+  styleUrls: ['./card.component.css'],
+  encapsulation: ViewEncapsulation.None,
+})
+```
+
+then both paragraphs will be red. here we say, we dont need any encapsulation.
+It is okay that the style overwrites global styles or vice versa.
+
+Other options are
+
+- Emulated ( default ) - Angular modifies the component's CSS selectors so that they are only applied to the component's view and do not affect other elements in the application, emulating Shadow DOM behavior. Styles are added to the head of the document.
+- None ( styles added to head and will globally affect any matching elements )
+- ShadowDom a.k.a Native ( works only if browsers has built in support for it. So emulated is the recommended default). Styles are only added to the shadow DOM host
+
+#### What is a shadow DOM
+
+Think of it as a DOM within a DOM, but specific to that element.
+Think of it as a gated house within a community.
+The component's view is enclosed within ShadowRoot, and the styles are isolated to that portion of DOM
