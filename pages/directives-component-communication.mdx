@@ -1,31 +1,31 @@
 # Directives
 
-- They are instructions placed in DOM.
+- They are instructions placed in DOM. For example, components. 
 - Directives doesn't have a template as components do (📚)
 - Unlike jquery or javascript, we never do direct DOM changes.
 - Instead, we delegate that task to directives which is managed by angular.
 
-#### They are of 2 types
+### They are of 2 types
 
 - Structural Directives
+
   - they changes the structure of the DOM.
   - So with this, we can conditionally, add or remove items from DOM
   - they are denoted using an asterik.
   - `*ngFor, *ngIf` are the most common structural directives
   - `*ngFor` allows us to iterate through collections
   - `*ngIf` allows us to show / hide elements conditionally
+
 - Attribute directives
+
   - They change the attributes of the element which they are placed on
   - `[ngClass]` to add/remove classes,
   - `[ngStyle]` to conditionally add styles,
   - `[ngSwitch]` to have our traditional switch cases
 
-Checkout more syntax variations here
+[Example here](https://stackblitz.com/edit/ngdocs-03)
 
-- [NgStyle documentation](https://angular.io/api/common/NgStyle)
-- [NgClass documentation](https://angular.io/api/common/NgClass)
-
-#### We can also show if/else clauses
+### We can also show if/else clauses
 
 ```js
 <p *ngIf="isAdult"; else minor> Senior</p>
@@ -35,21 +35,45 @@ Checkout more syntax variations here
 </ng-template>
 ```
 
-- Here we say, if the expression `isAdult `evaluates to true, show the main content,
-- else whatever we held within the `<ng-template` is shown.
-- We mark the template with something called a "TemplateRef" which is `#minor` here
-- Simply put, we refer a template element
+[Example here](https://stackblitz.com/edit/ngdocs-03-dqgaru?file=src%2Fapp%2Fapp.component.ts)
 
-#### Component Communication
+- Here we say, if the expression evaluates to true, show the main content,
+- else whatever we held within the `<ng-template` is shown. By default the ng-template is not rendered in the DOM
+- We mark the template with something called a "TemplateRef" which is `#notawesome` here ( think of it as putting an ID in jQuery)
+- Simply put, we grab an element reference in the template.
+
+### Index for looping
+
+```
+*ngFor="let item of items; let idx = index"
+```
+
+This basically gives access to the current index of the iteration.
+
+### Component Communication ( parent to child )
+
+Just like we have built in properties for elements like `src, alt` etc, and default events like `click, enter` etc, 
+We can have custom properties and events too which helps components to communicate.
+
+Drawn with excalidraw.
 
 ![Component communication](/images/cmp-com.png)
 
+Always keep in mind, data flows down, events flow up.
+
+[Example here](https://stackblitz.com/edit/ngdocs-03-aw58ey?file=src%2Fapp%2Fapp.component.ts)
+
 - simply put, the child accepts input via `@Input()`
 - child emits events back to its parent via `@Output()`
-- `EventEmitter<any>()` is a generic type helps us to emit our own events in angular.
-- `onSelect` is a custom event.
+- `EventEmitter<any>()` is a generic type helps us to emit our own events in angular. 
+- `onSelect` is a custom event. Just like regular click, mouse, keyboard events, we create our own custom event here.
 
-## Example time ( there is a lot hidden in this tiny example )
+### Question time 
+
+- if we have a chain of components where there are 4 levels, is it okay if we pass the data from parent to the deeply nested child as props?
+- What are the drawbacks?
+
+### Example time ( Putting everything we have learned till now)
 
 - This time, we are taking all the knowledge we learned till now and build something small.
 - Go through the code and see if you can track them & understand. Dont freak out! It is easy.
@@ -67,57 +91,19 @@ Checkout more syntax variations here
   - we conditionally show a "fresher message" if user is fresher with `*ngIf`
   - we do interpolation & attribute binding like we learned before.
   - we use a switch statement to tell more about skill rating with `[ngSwitch]`
-  - we define an interface to define how a user should look like.
+  - we define an interface / model to define how a user should look like.
   - we use `ngStyle` to change cursor styles inline
   - Click on the button and check console.
   - Use bootstrap Card to display user details
 
-```js
-[
-  {
-    id: 7,
-    email: 'michael.lawson@reqres.in',
-    first_name: 'Michael',
-    last_name: 'Lawson',
-    fresher: true,
-    skillRating: 2,
-    avatar: 'https://reqres.in/img/faces/7-image.jpg',
-  },
-  {
-    id: 8,
-    email: 'lindsay.ferguson@reqres.in',
-    first_name: 'Lindsay',
-    last_name: 'Ferguson',
-    fresher: false,
-    skillRating: 4,
-    avatar: 'https://reqres.in/img/faces/8-image.jpg',
-  },
-  {
-    id: 9,
-    email: 'tobias.funke@reqres.in',
-    first_name: 'Tobias',
-    last_name: 'Funke',
-    fresher: false,
-    skillRating: 5,
-    avatar: 'https://reqres.in/img/faces/9-image.jpg',
-  },
-];
-```
+[Stackblitz code](https://stackblitz.com/edit/ngdocs-04-tdlqrt?file=src%2Fapp%2Fapp.module.ts)
 
-[Stackblitz code](https://stackblitz.com/edit/angular-ivy-eggqfy?file=src/app/users/users.component.ts)
 
-#### Stackblitz Embed
+### Explanation
 
-<iframe
-  width="100%"
-  height="500"
-  src="https://stackblitz.com/edit/angular-ivy-eggqfy?file=src/app/users/users.component.ts"
-></iframe>
-
-#### Explanation
-
-- here, we are having a custom property called `user` for the `UserComponent` to which we pass a user instance down from the parent & a custom event `OnSelect`
+- Here, we are having a custom property called `user` for the `UserComponent` to which we pass a user instance down from the parent & a custom event `OnSelect`
 - The property binding and event binding is used here too, just that on our own properties and events
+
 
 ```js
 <app-user
@@ -133,7 +119,7 @@ Checkout more syntax variations here
 - What parent does with that info is not child's concern. It can log the value, add it to collection, or show a notification. Whatever it is.
 - It makes testing much easier.
 
-#### Additional notes
+### Additional notes
 
 - There is a concept called "**alias**"ing where we can alias the input and output.
 - **Reason:** You created an input & ouput and when expose, you realize that some other developer too has used the same name for inputs and outputs, or the project style guide recommends another pattern. So when we expose them outside, we use a different name, but logics within are in tact.
@@ -145,7 +131,16 @@ export class UserComponent {
 }
 ```
 
-so then we need to use them as below to avoid conflicts
+instead of this
+
+```
+<app-user
+  (onSelect)="handleSelect($event)"
+  [user]="user">
+</app-user>
+```
+
+ we need to use them as below for it to work once we apply aliases
 
 ```
 <app-user
@@ -153,3 +148,4 @@ so then we need to use them as below to avoid conflicts
   [myUser]="user">
 </app-user>
 ```
+

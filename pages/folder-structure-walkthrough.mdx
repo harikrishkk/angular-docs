@@ -1,0 +1,176 @@
+# Folder structure walkthrough
+
+![folder structure](/images/folder-str.png)
+
+### How is the application getting bootstrapped? ( 📚 )
+
+> Angular.json is the heart of the application
+
+In angular.json, look at this portion
+
+```js
+"root": "",
+"sourceRoot": "src", // 👈 means, the application source is held within this folder
+"prefix": "app", // 👈 means, the components will be prefixed with this word (app-root, app-header etc)
+"architect": {
+        "build": {
+          "options": {
+            "index": "src/index.html", // 👈 the only HTML sent across from server
+            "main": "src/main.ts", // 👈 the first file compiler should look for.
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss" // 👈  custom styles which are imported dynamically in head as a link tag
+            ],
+            "scripts": [] // 👈  extra javascript to be dynamically injected as a script tag
+```
+
+and within the index.html, we have a placeholder. The whole application will be rendered inside this placeholder div
+
+```js
+<body>
+  <app-root></app-root>  // 👈 whole app rendered inside this component
+</body>
+```
+
+within this placeholder, whatever module the `main` points to, ( `src/main.ts` )
+
+the `main.ts` points to the AppModule
+
+```js
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { AppModule } from './app/app.module';
+
+platformBrowserDynamic()
+  .bootstrapModule(AppModule)
+  .catch((err) => console.error(err));
+```
+Angular has the concept of modules. ( which is a nice way of encapsulating functionalities into smaller focused bundles which can be brought into the application based on our requirements. ).
+
+The syntax above basically says, `platformBrowserDynamic` is a module that helps us take our application which is wrapped within the AppModule to loaded into browser. This step is done via `platformBrowserDynamic` and not directly injected into DOM like a jquery or javascript using `document.querySelector` or anything. That is because we need to make the application loosely coupled so that it can be plugged into browser as well as non browser environments. ( like Ionic which is used for building native mobile apps ). For such situation, instead of `platformBrowserDynamic`, we use the mobile equivalent method `platformNativeScriptDynamic` so that the bootstrapping is done right and there is no direct DOM dependency. We need our application to work on all environments ( browser, server, web worker, mobile device etc ).
+
+An angular application should contain **atleast one module and within that one component** ( _With Angular 16, we have stand alone components which omits the use of modules though - More on that later_ )
+
+### What about modules? 
+
+![folder structure](/images/module-diagram.png)
+
+Think of modules like a basket. Instead of dumping all the fruits in one basket, we divide them into respective baskets and put them within. Apples in one basket, oranges in other. Similarly, we can divide the application into respective dedicated modules. Each module is like a gated wall. Whatever gets registered within this module can be used within this module. To use them at some other modules, we need to explicitly export them.
+
+Not all the logic is stuffed into one single module. Instead, they are divided into smaller modules each having their some specific functionality. To unlock the functionality, we need to register the module. ( eg: Forms, HTTP, Animations )
+
+An `AppModule` looks like this.
+
+```js
+@NgModule({
+  declarations: [AppComponent], // 👈 register components, pipes, directives here
+  imports: [BrowserModule, AppRoutingModule], // 👈 other modules are registered here
+  providers: [], // 👈 services are registered here
+  bootstrap: [AppComponent], // 👈 root component of the application
+  exports: [] // 👈 Things that need to be exported from this module to another.
+})
+export class AppModule {}
+```
+
+Note: `providers: []` is not as simple as it is, more on it later.
+
+Here, we see something called a `@NgModule` which is a decorator.This is a typescript concept.
+
+A class can be decorated with various decorators. Here since its decorated with `@NgModule` we are asking the angular compiler to identify the class as a Module and we also pass some configuration into it. Similar to NgModule, we have `@Component`, `@Directive`, `@Pipe`, `@Injectable` etc, 
+
+The `bootstrap` property points to the root component which is `AppComponent` ( Note that this is not css bootstrap and has nothing to do with it. Don't get confused. This basically means glue the component to the module as the first component in the tree ). Angular is asking, "where should I start creating the component tree from?"
+
+Basically, our application is a bunch of components nested within one another and represents more or less like a tree, for which, we need a root, and that root is `AppComponent`
+
+if you remove the `AppComponent` from the `bootstrap` property, keep the array empty and see the browser, we see it empty. Check the console and see those error
+
+```js
+ERROR Error: NG0403: The module AppModule was bootstrapped, but it does not declare "@NgModule.bootstrap" components nor a "ngDoBootstrap" method. Please define one of these.
+```
+
+basically, the error screams that the root component is missing.
+
+### Wiring up explained.
+
+The index.html is the only page that is served. There are dynamic scripts being injected in index.html of the served page, by cli automatically. These bundles are added automatically by the framework. The flow is angular.json -> main.ts -> starts / bootstraps the angular app by passing a module to this method. In app module, we registered the app.component as the bootstrap property. This is the first component that needs to be loaded. Angular framework changes the DOM at runtime. 
+
+
+### What is a component
+
+if you open up `app.component.ts`
+
+```js
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+})
+export class AppComponent {
+  title = 'test';
+}
+```
+
+we see something similar to what we have seen before. A regular typescript class, but this time decorated with `@Component`. Decorators add metadata to make angular understand what it is and how it should process it. The decorator informs angular that, please consider this class as a component. We will use this component with the custom tag of `<app-root></app-root>` ( in index.html)
+
+Every component will be having 3 pieces
+
+- Template logic ( within HTML)
+- Business logic ( within the class file , ie `.ts` file)
+- Styling ( within the `.css / .scss` file)
+
+The style that is mentioned in the css will be `scoped` to that component by default. ( More on that later)
+
+A variation of the component can be like this with **inline template & inline styles**.  
+
+```js
+@Component({
+  selector: 'app-root',
+  template: `<h1>Hello</h1>`,
+  styles: [
+    `
+      * {
+        color: red;
+      }
+    `,
+  ],
+})
+export class AppComponent {
+  title = 'test';
+}
+```
+
+which one to choose is a personal choice. From angular's perspective, there is no advantage of using one over the other.The one point that we can argue is that, if we use the array syntax for styles, then we can have multiple style files tacked on if we wish.
+
+```js
+styleUrls: ['style1.scss', 'style2.scss'],
+```
+
+The above is not common, but possible. This may need additional webpack configuration tweaks.
+
+[Read more here](https://stackoverflow.com/questions/40763056/loading-multiple-stylesheet-for-a-component-in-angular2)
+
+A component selector can be an element, an attribute, a class but not a ID
+
+```js
+@Component({
+  selector: 'app-header', //by element
+  selector: '[app-header]', // by attribute
+  selector: '.app-header', // by class
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css']
+})
+
+```
+
+**Note:** just because we created a component doesn't mean angular will magically recognize them.
+For that, we need to register them within the module inside the `declarations` array
+
+```js
+@NgModule({
+  declarations: [  AppComponent ], // 👈 register the component
+```
+Unless a component is registered within a module, angular won't be able to recognize them as component & identify its custom selector anywhere within the module where we try to use them as components. If we dont register the component, it says that the custom selector we used is something that angular didnt understand.
+
+The `.spec` file is for unit testing purpose.

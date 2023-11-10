@@ -5,23 +5,33 @@ npm install -g @angular/cli
 ```
 
 If using mac, you may need to use `sudo` at the start
-
 If you are within a office/corporate environment, you may need admin rights to do the same.
-Reach out to the Tech support or raise a request to have temporary admin access.
+
+### Need for a CLI 
+
+Why cli? The source code is build, Typescript is compiled to javascript and spins up a dev server. Double clicking index.html and opening up will only have a file protocol and we need a lot of dynamic compiling and we need to simulate how it looks in a real app only if we have the http protocol. For those, we need cli tooling, which does the heavy lifting. CLI does optimizations behind scenes to give a bundle for respective environments.
 
 #### To create an angular application
 
 ```
 ng new my-app-name
-```
 
-Once the installation is done, run the app by the command `ng serve` and the application will be
+```
+It will ask the following questions
+
+- Add routing? : **Yes**
+- Stylesheet   : **css/Less/Sass/Scss**
+
+Once the installation is done, `cd` into the folder & run the app by the command `ng serve` and the application will be
 up and running in port 4200 by default.
 
 In terminal
 
 ![terminal](/images/terminal.png)
 
+The bundle values which we see changes depending on when you are seeing this.
+As angular is iteratively improved, optimizations provided will keep the bundle sizes even smaller.
+ 
 Open the browser under this url
 
 ```
@@ -37,4 +47,6 @@ If you open the "View Page Source", it should look something like this
 ![view page source](/images/page-source.png)
 
 which if you wonder, doesnt look like the screenshot you saw as the landing page.
-This is what SPA does. The initial load just bring in this much only, and th whole application is rendered within `<app-root></app-root>` tag which you see above. See the explanation of the same in the next section.
+This is what SPA does. The initial load just bring in this much only, and the whole application is rendered within `<app-root></app-root>` tag which you see above. See the explanation of the same in the next section.
+
+

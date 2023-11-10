@@ -1,0 +1,162 @@
+# Forms
+
+- Angular helps us retrieve the value and also the validity. 
+- We also need some javascript representation of the form in typescript code to work with. 
+- 2 types of forms ( Template driven & reactive )
+- In template driven, angular infers the form object from the DOM. 
+- In reactive, the form is created programmatically and synchronized with the form. 
+
+### Basic Form
+
+- We dont need to add any action attributes to forms.
+
+```js 
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6">
+      <form>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="email" class="form-control" placeholder="user name" />
+        </div>
+        <div class="form-group mt-2">
+          <label>Email</label>
+          <input type="email" class="form-control" placeholder="email " />
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+```
+
+- To make the form template driven / reactive , we need to add respective modules & register them to AppModule.
+- We either need `FormsModule` or `ReactiveFormsModule` for this.
+- Angular automatically creates a js representation of a  form for us, when it detects a `<form>` tag. 
+- There is a directive that’s created behind the scene, and it creates the JS representation of our form. 
+- Angular wont detect inputs automatically. 
+
+[Example](https://stackblitz.com/edit/angular-ivy-wij4xu?file=src%2Fapp%2Fapp.component.html)
+
+To access the form in code, use `@ViewChild`. Be aware of the life cycle hooks as well.
+
+```js 
+export class HomeComponent implements OnInit, OnDestroy {
+  @ViewChild('f') form: ElementRef;
+
+  onSubmit(){
+   console.log(this.form)
+  }
+}
+
+```
+
+### Adding validation 
+
+We can also add pattern validation `pattern="^[1-9]+[0-9]*$"`
+
+[Example](https://stackblitz.com/edit/angular-ivy-yftc3j?file=src%2Fapp%2Fapp.component.html)
+
+
+### To set default value 
+
+[Example](https://stackblitz.com/edit/angular-ivy-76dsso?file=src%2Fapp%2Fapp.component.ts)
+
+### Two way binding 
+
+```js
+<div class="form-group">
+    <textarea [(ngModel)]="answer" name="qnAnswer" rows="3"></textarea>
+</div>
+<small> {{ answer }} </small>
+
+```
+
+### Grouping form controls 
+
+[Example](https://stackblitz.com/edit/angular-ivy-dwgezb?file=src%2Fapp%2Fapp.component.html)
+
+### SetValue & PatchValue 
+
+- SetValue sets the whole form. It overwrites previous contents 
+- PatchValue can patch some of its properties.
+
+[Example](https://stackblitz.com/edit/angular-ivy-v5hfpj?file=src%2Fapp%2Fapp.component.ts)
+
+### Using FormData & reset
+
+```js 
+this.form.value.userData.username
+this.form.value.userData.email
+this.form.reset();
+```
+
+### Reactive Forms 
+
+- add respective imports to AppModule 
+- We create the form through code. 
+
+[Example](https://stackblitz.com/edit/angular-ivy-yqj9pq?file=src%2Fapp%2Fapp.component.html)
+
+### Adding validations 
+
+[Example](https://stackblitz.com/edit/angular-ivy-vhteer?file=src%2Fapp%2Fapp.component.ts)
+
+### Grouping controls & getter properties
+
+[Example](https://stackblitz.com/edit/angular-ivy-hl4xvm?file=src%2Fapp%2Fapp.component.ts)
+
+### FormArray & Dynamic adding of FormControls into it
+
+[Example](https://stackblitz.com/edit/angular-ivy-raabck?file=src%2Fapp%2Fapp.component.ts)
+
+### Create custom validators 
+
+[Example](https://stackblitz.com/edit/angular-ivy-n6rnx1?file=src%2Fapp%2Fapp.component.html)
+
+### Async validators 
+
+[Example](https://stackblitz.com/edit/angular-ivy-6nagkd?file=src%2Fapp%2Fapp.component.html)
+
+### Reacting to status / value changes 
+
+```js 
+this.signupForm.statusChanges.subscribe(
+      status => console.log(status)  // pending or invalid
+)
+
+ this.signupForm.valueChanges.subscribe(
+      (value) => console.log(value)
+)
+
+```
+
+### To set, patch & reset values 
+
+```js
+this.signupForm.setValue({
+  'userData': {
+    'username': 'abc' ,
+    'email': 'abc@bbc.com',
+  },
+  'gender': 'male',
+  'hobbies': []
+})
+
+this.signupForm.patchValue({
+  'userData': {
+    'username': 'abc' ,
+    'email': 'abc@bbc.com',
+  }
+})
+
+this.signupForm.reset();
+```
+
+### Clear all items in a form array 
+
+```js 
+(<FormArray>this.recipeForm.get('ingredients')).clear();
+```

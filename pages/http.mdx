@@ -1,0 +1,44 @@
+# Http 
+
+To make an ajax call, we need to import the respective modules.
+We create a service & use this within to make the ajax call that triggers a request to a server that holds some data outside the app.
+From a REST API end point, what we receive is mostly JSON/XML.
+
+[Example](https://stackblitz.com/edit/angular-ivy-gpav6d?file=src%2Fapp%2Fuser.service.ts)
+
+### To handle errors
+
+Use the catch method for that.
+
+We can also use async pipe to subscribe them automatically.
+RXJS operators can be used to transform the data before it is sent to the component. 
+catchError can be used to handle error cases in rxjs, especially in services,  make sure to return an observable from the catchError. 
+
+### Query params 
+
+```js 
+storeRecipes() {
+    const token = this.authService.getToken();
+    return this.httpClient.put('endpoint-url',
+    this.recipeService.getRecipes(), {
+      observe: 'body',
+      params: new HttpParams().set('auth', token)
+    })
+  }
+
+```
+
+### Intersceptor 
+
+
+
+Multi says that we can have more than one intersceptors if we need.
+
+[Example](https://stackblitz.com/edit/angular-ivy-nudenr?file=src%2Fapp%2Finterceptor.service.ts)
+
+By default, the requests are immutable. We cant edit them. 
+We can retry requests with the retry() operator on observables. 
+If we retry, it will actually get sent through the interceptors multiple times and if we edit them directly, it gets break at some point of time. 
+So we need to clone them before we edit them. 
+
+

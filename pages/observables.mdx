@@ -1,0 +1,90 @@
+# Observables
+
+- Basically a data source. ( user input events, http requests, triggered in code). 
+- Observable can handle data, error, completion. These are the 3 types of data we receive.
+- Even if we change the tab / destroy the component , the subscription is still alive. SO it can cause memory leaks if left unsubscribed.
+- Can do more with operators that it provides.
+- An observable is a construct that needs to be subscribed inorder for it to emit data.
+- With operators, we can transform the data to something else. 
+
+```js 
+ngOnInit() {
+    const myNum = Observable.interval(1000);
+    myNum.subscribe(
+      (number) => console.log(number),
+      (err) => console.log(err),
+      () => console.log('completed')
+    )
+  }
+
+// another example 
+this.route.queryParams.subscribe((params) => {
+ console.log(params)
+})
+```
+
+### Create observables from scratch 
+
+```js 
+ngOnInit() {
+    const myObs = Observable.create( (observer: Observer<string>) => {
+      setTimeout( () => {
+        observer.next('first package')
+      }, 2000)
+
+      setTimeout( () => {
+        observer.next('second package')
+      }, 4000)
+
+      setTimeout( () => {
+        observer.error('Something is wrong')
+      }, 5000)
+    })
+
+    myObs.subscribe(
+      (data:string) => console.log(data),
+      (err) => console.log(err),
+      () => console.log("completed!")
+    )
+  }
+
+```
+
+### Subject to pass and listen to data 
+
+- we import them from rxjs
+- we use next/subscribe to emit and listen to them 
+- In component, we need to unsubscribe them though.
+- We use them for cross component communication involving services.
+
+```js
+
+@Injectable()
+export class AuthService {
+  mySub = new Subject<string>();
+}
+
+// and in component - Emit the data
+constructor(private authSvc: AuthService) { }
+
+generate(){
+  this.authSvc.mySub.next("Awesome");
+}
+
+// in another component ,Listen to the data
+export class ContactComponent implements OnInit {
+  constructor(private authSvc: AuthService) { }
+
+  ngOnInit() {
+    this.authSvc.mySub.subscribe(
+      msg => console.log(msg)
+    )
+  }
+}
+
+```
+### More references
+[Learn rxjs operators](https://www.learnrxjs.io/learn-rxjs/operators)
+
+[Example here](https://stackblitz.com/edit/angular-ivy-yd24zc?file=src%2Fapp%2Fuser.service.ts)
+

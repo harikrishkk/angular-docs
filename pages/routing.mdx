@@ -1,0 +1,348 @@
+# Routing 
+
+Is when, instead of moving from page to page, we swap components within a placeholder called `router-outlet`
+The page never refreshes. We should never use the traditional href, but instead use the `routerLink` for in app navigations
+
+RouterLink can be used as 
+
+```js
+<a routerLink="/">Home</a>
+<a [routerLink]="['/users']">Users</a>
+<a routerLink="users">Users</a> // 👈 relative path
+<a routerLink="/about">About</a> // 👈 absolute path
+```
+
+### Routing with its configuration example: 
+
+The configuration is usually defined as a separate module & then imported into AppModule & registered there.
+
+```js 
+
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+
+// Components 
+import { AboutComponent } from './pages/about/about.component';
+import { ContactComponent } from './pages/contact/contact.component';
+import { HomeComponent } from './pages/home/home.component';
+
+const appRoutes: Routes = [
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
+  { path: 'about', component: AboutComponent },
+  { path: 'contact', component: ContactComponent },
+];
+@NgModule({
+  imports: [RouterModule.forRoot(appRoutes)],
+  exports: [RouterModule],
+})
+export class AppRoutingModule {}
+
+// and in AppModule
+
+import { AppRoutingModule } from './app-routing.module';
+
+@NgModule({
+  imports: [AppRoutingModule],
+});
+
+// And in AppCompoennt 
+
+<router-outlet></router-outlet>
+
+```
+[Example here](https://stackblitz.com/edit/angular-ivy-vrsk5p?file=src%2Fapp%2Fapp.module.ts)
+
+### Relative paths 
+
+If we do not use the leading slash, then it is a relative url path.
+With a relative path, it appends the path to the end of the current browser path. 
+Absolute path, always appends to the root domain.
+
+```html 
+<div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+  <h1 class="display-4 fw-normal">Contact</h1>
+  <p class="fs-5 text-body-secondary">Contact page</p>
+  <a routerLink="office"> Office </a>
+</div>
+```
+
+### Styling active links 
+
+Note: `nav-active` is a custom class. 
+`routerLinkActive` can be added to wrapping element or link itself.
+
+```js
+<a
+  routerLink="/"
+  routerLinkActive="nav-active"
+  [routerLinkActiveOptions]="{ exact: true }" // 👈 add only when path matches fully
+  class="nav-link">Home</a
+>
+<a
+  routerLink="/about"
+  routerLinkActive="nav-active"
+  class="nav-link">About</a
+>
+```
+
+The `routerLinkActive` will automatically add the active class when browser url matches the path mentioned in routerLink
+
+### Programmatic navigation 
+
+```js
+export class HomeComponent {
+  constructor(private router: Router) {}
+
+  goToAbout() {
+    // this.router.navigateByUrl('/about');
+    this.router.navigate(['/about'])
+  }
+}
+```
+
+### Use relative paths in programmatic navigation
+
+When we use relative path via routerLink, it threw error, when it was trying to navigate relative to browser URL. 
+When configuring from code, we need to pass an extra argument called "relativeTo".
+
+```js
+
+constructor(
+   private router: Router, 
+   private activatedRoute: ActivatedRoute) {
+}
+
+goToAbout() {
+  this.router.navigate(['about'], { relativeTo: this.activatedRoute })
+}
+```
+
+### Pass parameter to route
+
+```js
+
+// 👇 define a route
+{ path: 'about/:id', component: UserComponent },
+
+// 👇 navigate to it. 
+<a [routerLink]="['/about', 1]"> User 1 </a>
+
+// 👇 consume the dynamic parameter
+
+export class UserComponent implements OnInit {
+  constructor(private activatedRoute: ActivatedRoute) {}
+
+  ngOnInit() {
+    // The "1" is parsed as a string within the code. So may need to convert into a number if you try to access in code & expects a number.
+    // const id = this.activatedRoute.snapshot.params['id'];
+    this.activatedRoute.params.subscribe((params: Params) => console.log(params));
+  }
+}
+
+```
+Above, we have 2 ways to access route params.
+
+- With `activatedRoute.snapshot.params['id']`, we get the actual value ( good for first initialization, but wont react to subsequent changes  )
+- With `activatedRoute.params.subscribe`, we get an observable which we need to subscribe to get the actual value. ( params is an observable )
+
+If we are on the component and then try to load a different id, the url may change, but the page wont reflect it. On such cases, we need to use the observable version.
+Angular wont rerender the component if we are already on the same route even if the data has changed from within. With observables, we get to watch for changes and whenever that change happens, the component re-renders.
+If we know the component wont be reloaded from within again, we dont need to use subscriptions.
+Angular is smart enough to unsubscribe to observables created by them ( eg: Params, HTTP etc), but it will not unsubscribe from the ones we created manually.
+Angular cleans up the subscription when the component is destroyed. Subscriptions live on in the memory, as its not tied to the component. So use `OnDestroy` to destroy them manually.
+
+[Example here](https://stackblitz.com/edit/angular-ivy-kwa8em?file=src%2Fapp%2Fpages%2Fabout%2Fabout.component.html)
+
+### Note: 
+
+When we subscribe observables given by angular, angular will auto unsubscribe it.
+The observables created by us, need to be manually unsubscribed.
+
+```js
+
+export class GalleryItemComponent implements OnInit, OnDestroy {
+  sub: Subscription;
+
+  item : { id: string, category: string }
+  constructor(private route: ActivatedRoute) { }
+
+  ngOnInit() {
+    this.sub = this.route.params.subscribe(
+      param => {
+        this.item = {
+          id: param['id'],
+          category: param['category']
+        }
+      }
+    )
+  }
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+  }
+}
+
+```
+
+### Query params & fragments 
+
+```html
+<ul>
+  <li *ngFor="let item of items">
+    <a [routerLink]="['/gallery', item.id, item.name]"
+      [queryParams]="{ allowEdit: '1'}"
+      [fragment]="'loading'"
+    >
+      {{ item.name }}
+    </a></li>
+</ul>
+
+```
+to do them dynamically,
+
+```js
+<a (click)="gotoGallery(1)"> Go to gallery item </a>
+
+export class HomeComponent implements OnInit {
+
+  constructor(private router: Router) { }
+
+  gotoGallery(id: number){
+    this.router.navigate(['/gallery', id, 'architecture'], {
+      queryParams: { allowEdit : '1'},
+      fragment: 'loading'
+    })
+  }
+}
+
+```
+
+### Retrieve queryParams and fragment 
+
+```js
+export class GalleryItemComponent implements OnInit, OnDestroy {
+  queryParam;
+  fragment;
+  constructor(private route: ActivatedRoute) { }
+
+  ngOnInit() {
+
+    this.queryParam = this.route.snapshot.queryParams;
+    this.fragment = this.route.snapshot.fragment;
+  }
+}
+
+// and in html
+<p>QueryParam : {{ queryParam.allowEdit }} and fragment is {{ fragment }} </p>
+```
+
+and with subscription 
+
+```
+ ngOnInit() {
+  this.route.queryParams.subscribe()
+  this.route.fragment.subscribe()
+ }
+
+```
+
+Note: The id we receive from the route is a string and we need to type cast them with the + to convert them into number. ( this.route.snapshot.params['id']). If we parse a parameter from URL, it will always be a string.
+
+### Nested routing 
+
+```js 
+
+const appRoutes: Routes = [
+  { path: 'contact', component: ContactComponent, children: [
+     { path: 'office', component: OfficeComponent }, // loads contact/office
+     { path: 'mobile', component: MobileComponent } // loads contact/mobile
+  ] },
+];
+
+and add a router outlet in the template of ContactComponent.
+```
+
+### Preserve query params 
+
+```js 
+goToAbout() { 
+  this.router.navigate(['about'], { relativeTo: this.activatedRoute, queryParamsHandling: 'preserve' }) // or 'merge'
+}
+```
+
+### Redirecting and wildcard
+
+```js
+const appRoutes: Routes = [
+  { path: '', redirectTo: '/home', pathMatch: 'full' }, // pathMatch is needed here 
+  { path: 'home', component: HomeComponent },
+  { path: 'about', component: AboutComponent },
+  { path: 'contact', component: ContactComponent },
+  { path: 'contacts', redirectTo: '/contacts' },
+  { path: '**', redirect: '/not-found' }, // make sure this comes last
+];
+```
+
+### Route guards 
+
+Helps us restrict access to certain routes until certain criteria is met. 
+Here, unless the user is logged in, we do not let routing to the about page, instead redirected back to the home page if not logged in. 
+
+[Example](https://stackblitz.com/edit/angular-ivy-vlf54r?file=src%2Fapp%2Fservices%2FAuthService.ts)
+
+Make sure, we register the service in AppModule, or use providedIn root and then use the canActivate property
+
+
+To protect child routes, we can use CanActivateChild 
+
+[Example](https://stackblitz.com/edit/angular-ivy-s1srmn?file=src%2Fapp%2Fapp-routing.module.ts)
+
+To control deactivation , create a guard. 
+
+[Example](https://stackblitz.com/edit/angular-ivy-bvcxpq?file=src%2Fapp%2Fservices%2Fdeactivate.guard.ts)
+
+### Passing static data to a route
+
+```js 
+ { path: 'not-found', 
+   component: ErrorComponent, 
+   data: { 'message' : 'Sorry, cudnt find it'}
+ },
+
+// and in the component 
+
+export class ErrorComponent implements OnInit {
+
+  errorMessage;
+  constructor(private route: ActivatedRoute) { }
+
+  ngOnInit() {
+    this.errorMessage = this.route.snapshot.data['message'];
+  }
+}
+
+```
+
+### Resolve guard 
+
+If there is some dynamic data that needs to be fetched before the route is displayed, This will run some code before the route is loaded. 
+Resolver will not decide if the route should be loaded or not. It will always render the component in the end, but before that, pre loads the component with some data.
+
+[Example](https://stackblitz.com/edit/angular-ivy-nblmrn?file=src%2Fapp%2Fservices%2Fresolver.service.ts)
+
+### Location strategies 
+
+If we host in a real server, the url is always parsed by server first, and in a 404 case, server should return the index.html file. 
+To support older browsers ( rare cases only), we can use the hashbang, 
+This says, only care of the part infront of the #, not the one to the left of it. This is the older approach though. 
+Turn this mode on by adding the useHash property.
+
+```js 
+@NgModule({
+  imports: [
+     RouterModule.forRoot(appRoutes, { useHash : true })
+  ],
+  exports: [RouterModule]
+})
+
+```

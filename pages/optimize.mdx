@@ -1,0 +1,36 @@
+# Angular optimizations 
+
+- Module is a way of bundling angular blocks together.
+- Component + Directive + Services + Pipes are all registered to a module as a bundle.
+- Angular needs atleast 1 module.
+- We can create separate Modules and import them ( non lazy) & via routers ( lazy )
+- Make sure you know the angular bootstrap flow.
+- The moment we import module into imports of other, its loaded instantly.
+- Leaner modules are recommended.
+- FeatureModules can help split the app into smaller focused module.
+- we need to use RouterModule.forChild() instead of forRoot.
+- BrowserModule (used only once in the AppModule), CommonModule needs to be added at the rest of the feature module.
+- SharedModule can be shared across multiple modules. Add the shared  components, directives, pipes, services etc here. Export them with exports: []
+- All we need is to export it, import the SharedModule and add them into the imports: []
+- Dont register components in multiple modules.
+- CoreModule - to make the app module leaner.
+- The services which we have registered in the providers array of AppModule, and if we havent provided the providedIn: root, create a core module, 
+- add a `@NgModule` within which add the providers array, and all its entries here.  Import CoreModule into AppModule.
+
+### Lazy loading 
+
+[Example](https://stackblitz.com/edit/angular-ivy-53guqv?file=src%2Fapp%2Fpages%2Fcontact%2Fcontact.module.ts)
+
+- use LazyLoading based on requirements only. It comes with its own code overhead.
+
+### Pre loading lazy loaded module
+
+```js 
+ RouterModule.forRoot(appRoutes, { preloadStrategy: PreloadAllModules })
+```
+
+If a service is provided to an eagerly loaded module, its available app wide as a single instance.
+If its provided in a lazy loaded module, then it is available only within that module.
+Never add services in an eagerly loaded module.
+
+

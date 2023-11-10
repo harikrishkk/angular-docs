@@ -1,11 +1,12 @@
 # Component compostion
 
+In angular, or rather any framework that uses component based architecture, 
 We no longer see a page as a page, but we see tham as a bunch of re-usable components.
 See the image below. We divide the page as a bunch of (nested) components 
 
 That's where the idea of composition comes into the picture. 
 
-#### You think about 
+### You think about 
 
 - making the leanest possible component, 
 - how can you customize them, 
@@ -20,15 +21,15 @@ That's what Single responsibility principle says. A component should ideally do 
 
 ![component composition](/images/composition.png)
 
-## Modules 
+### Modules 
 
-In angular modules are basically wrappers that bundle the components into packages. Note, there is something called typescript module too, which is not what i mean when i say "module" here in this context. 
+In angular, modules are basically wrappers that bundle the application into small packages. Note, there is something called typescript module too, which is not what i mean when i say "module" here in this context. 
 
 Module becomes more important when we discuss about `lazy loading` towards the end where we discuss about optimizations. For better loading times, we keep the main app module lean, and thin, and via routing, we load subsequent portions of the application upon clicking the link which then loads its code as a small chunk ( ie bundle of js which is a small file which you can see in the **Inspect / Network** section ) and navigates to that part of the application. 
 
-When the app grows, it becomes important to split them into meaningful modules so that we bundle the logic within respective modules and load them on demand. Don't just keep stuffing the app module with more and more logic. That hampers loading time, performance & peace. 
+When the app grows, it becomes important to split them into meaningful modules so that we bundle the logic within respective modules and load them on demand. Don't just keep stuffing the app module with more and more logic. That hampers loading time, performance & affects scalability & maintainability.
 
-Understand that the whole angular functionalities has been split between various modules.
+The whole angular functionalities has been split between various modules.
 If you take a look at the package.json, we see many package dependencies. Each package holds certain logic which we use it via registering them within the `imports: []` of the module when needed. 
 
 ```js
@@ -43,7 +44,7 @@ If you take a look at the package.json, we see many package dependencies. Each p
     "@angular/router": "^15.0.0",// 👈  routing logic here
 ```
 
-## Adding a new component 
+### Adding a new component 
 
 I use stackblitz for live code so that you get to see live previews of whatever we are learning.
 This helps you from jumping into other IDEs, having npm install issues, "_works in yours but not mine_" issues etc. If you want to code along in an editor, feel free to do so. I dont want anyone to miss out on the code. Hence using stackblitz as an embed. 
@@ -51,19 +52,33 @@ This helps you from jumping into other IDEs, having npm install issues, "_works 
 Styling is done using bootstrap 5. Note that styling isnt our priority.
 So, the point is explaning a concept in the least amount of code so that you get to understand the fundamentals and concepts within. 
 
-if you like to open the stackblitz editor in a sepeare browser, click [here](https://stackblitz.com/edit/angular-ivy-ajflut?embed=1&file=src/app/app.module.ts). You may need to login with google/github account though 
+if you like to open the stackblitz editor in a separate browser, 
+[Hello world Example here](https://stackblitz.com/edit/ngdocs-00-krc94b?file=src%2Fapp%2Fapp.module.ts).
+You may need to login with google/github account though. 
+Make sure you fork the code before working on it.
 
-Or else the embedded version below. if you like to play around, feel free to fork it. 
-Select the "Both" tab if you wish to see it side by side. 
+#### Here is a small task
+- Try creating a banner component.
+- Register the component and use them to show the component within the App Component.
+- Play around and see what happens if you forget to register the component within the module.
+- Go through the flow and see if you can wrap the head around the concept & flow.
 
-<iframe width="100%" height="500" src="https://stackblitz.com/edit/angular-ivy-ajflut?file=src/app/app.module.ts"></iframe>
+[Solution here](https://stackblitz.com/edit/ngdocs-00-tec9ku?file=src%2Fapp%2Fapp.module.ts)
 
-#### Explanation
+Question: What happens when we use the component instance twice?
+
+```js
+<app-banner> </app-banner>
+<app-banner> </app-banner>
+```
+Understand that, each component instance is different. State is confined to that instance. If we use the component twice, each has its own state slice.
+
+
+### Explanation
 
 In stackblitz, on the file explorer, if we right click, we get a menu called "Angular Generator" which helps to scaffold components, modules, services, directives, pipes etc. If you use VS code, there is an equivalent extension called "**Angular Schematics**". Other 2 VS code extensions worth recommending is **Angular Essentials** from John Papa, and **Angular Language Service** along with Prettier.
 If you are a fan of command line, then there is a cheat sheet which i found online [here](https://www.digitalocean.com/community/tutorials/angular-angular-cli-reference) 
 
-Nothing huge here, we added a `BannerComponent`, registered it in the `AppModule` and within it in the `declarations` array and used the selector in `app.component.html`
 
 As of now, there is nothing dynamic. The HTML of banner is just a static piece. We will bring interactivity into it. The HTML inside of the component contains few bootstrap classes for styling. That's all. Try to track the wiring up of the component in your mind. As we move forward, we will see more complex and advanced concepts. So start preparing for that now. 
 
@@ -82,4 +97,28 @@ import { BannerComponent } from './banner/banner.component'; // 👈  no .ts ext
 
 Yes, it is. A component is also a directive, but it should have a template. 
 But what exactly is a directive? We will see in detail when we discuss about directive.
+Basically, directives are instructions in DOM. It can be showing or hiding parts of the DOM, it can be adding or removing classes or attributes. Anything that involves accessing DOM, think of directives.  
 
+```js
+<div> div </div> is an instruction to the browser to create and render a divider element.
+Similarly, `<app-banner> </app-banner/>` is an instruction which is understood to angular compiler to create a banner component, & render its template along with data
+```
+
+### Styling & Templates ( Inline & regular ones )
+
+
+```js
+
+@Component({
+  templateUrl: '',
+  template:`<h1> test </h1>`, // inline
+  styleUrls: ['./app.component.css'],
+  // inline
+  styles: [`  
+    h3 { color: blue }
+  `]
+})
+```
+
+[Example here](https://stackblitz.com/edit/ngdocs-00-p1kkcq?file=src%2Fapp%2Fapp.component.html).
+Here, we used only the class file, and used the inline versions of template and styles.

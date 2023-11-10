@@ -1,0 +1,58 @@
+# Template / Local reference 
+
+Also known as Local references.
+Simply put, we need to grab an element in the component's template.
+Note: What we are grabbing is the reference of the element itself. 
+
+All we need is to put a template ref using a "hash" and it can be put in any HTML element.
+
+and then, we have access to the local reference anywhere in the template.
+We can pass them into function parameters if we want.
+or we can use the ViewChild to handle them programmatically.
+
+```js 
+<input
+      type="text"
+      #userInput
+      (input)="onInput(userInput.value)"
+    />
+```
+
+[Example here](https://stackblitz.com/edit/ngdocs-06-hrsvti?file=src%2Fapp%2Fapp.component.ts)
+
+### Getting access to template ref or DOM in code 
+
+We have another way to grab template refs in class file programmatically.
+That is through queries or "view queries"
+
+```js
+@ViewChild('userEmailRef') userRef: ElementRef;
+```
+Here, we say, hey i have a view query which is of type "ElementRef" 
+If there is a TemplateRef with a name of **userEmailRef** in the template of this component, then we need access to that template component. 
+
+#### Another key point: 
+
+- There is something called life cycle hooks ( which we will get to learn soon)
+- From the time a component is created, to the time it is destroyed, and in between when it is updated, different methods are triggered in an order. 
+- To keep it simple as of now, `constructor` is called when the component is about to be created, then comes `ngOnInit` which indicates that the component is ready. But at this point, only the class portion is ready, not the template portion. So we need to wait till `ngAfterViewInit` to get access to the template in our class code.
+- If we need access to TemplateRef in `ngOnInit` for whatever reason, then we need to adjust our query by adding "static" as an option. 
+
+```js
+@ViewChild('userEmailRef', {static: true} ) userRef: ElementRef;
+```
+
+#### Content projection 
+
+- we pass data in between the component's opening/closing element 
+- we can select slots into which we can send specific content
+- if we need to access them in OnInit, set static to true.
+- `@ContentChild('contentParagraph', {static: true}) paragraph: ElementRef;`
+
+### Important: 
+
+Life cycle hooks play a huge role when it comes to accessing templates. 
+For `ViewChild`, we need to wait till `AfterViewInit` life cycle hook, and for `ContentChild`, we need to wait till `AfterContentInit` hook to access the values from them. Before that, it will be undefined.
+
+
+[Example code](https://stackblitz.com/edit/ngdocs-07?file=src%2Fapp%2Fapp.component.html)

@@ -2,88 +2,26 @@
 
 We have 4 types of bindings (📚)
 
-By binding, we mean, a connection or a communication between template & class or business logic.
+By binding, we mean, a connection or a communication between template, which is the HTML  & class / business logic, which is the Typescript logic.
 
-- String interpolation. ( if we have any expression that can result in a string, use this )
-- Property binding (HTML element attributes / properties like alt, src, href , etc can be bound dynamically)
-- Event Binding ( click, keyboard events, mouseevents )
-- 2 Way binding
+- **String interpolation**. ( if we have any expression that can result in a string, use this )
+- **Property binding** (HTML element attributes / properties like alt, src, href , etc can be bound dynamically, or [innerHTML]="expression")
+- **Event Binding** ( click, keyboard events, mouseevents )
+- **2 Way binding** ( for which we need FormsModule with [(ngModel)] or "banana in a box syntax")
 
-#### Note:
+### Note:
 
 - String interpolation and property binding is from the class to the template. ie, (one way binding).
 - Event binding is when user interacts with template which updates the class . (This is also one way binding, but opposite direction )
 - Two way binding is, as the name suggests , bi-directional ( also called Banana in a box )
+- `$event` is a reserved keyword that passes the event data as a parameter when triggering event bindings.
+- By default, `event.target.value` returns a string. It is not angular related, but javascript specific.
 
-Our class file ( other details omitted , check the stackblitz code for full code)
 
-```js
-export class BannerComponent {
-  options = {
-    heading: 'Welcome',
-    description: '',
-    imageURL: 'https://picsum.photos/200/300',
-    imageAlt: 'dummy image',
-  };
+[Bindings Example here](https://stackblitz.com/edit/ngdocs-01?file=src%2Fapp%2Fapp.component.html)
 
-  accept() {
-    console.log(this.options.description);
-  }
-  cancel() {
-    console.log('cancelled');
-  }
-}
-```
+- Note: To get this 2 way binding feature, make sure, we need to register the `FormsModule` which we have imported from respective namespaces.
 
-and our template
-
-```js
-
-<img
-  class="d-block mx-auto mb-4"
-  [src]="options.imageURL"   /* 👈 property binding */
-  [alt]="options.imageAlt"
-  width="100"
-  height="100"
-/>
-
-/* 👇 String interpolation */
-<h1 class="display-5 fw-bold">{{ options.heading }}</h1>
-
-/* 👇 Property binding to innerHTML */
-<p [innerHTML]="options.heading"></p>
-
-<button
-  (click)="accept()" /* 👈 event binding */
-  type="button"
-  class="btn btn-primary btn-lg px-4 gap-3"
->
-  Accept
-</button>
-
-/*  👇 2 way binding  */
-<textarea [(ngModel)]="options.description"></textarea>
-```
-
-[Stackbkitz code](https://stackblitz.com/edit/angular-ivy-6ckg5o?file=src/app/banner/banner.component.ts)
-
-#### Stackblitz
-
-<iframe
-  width="100%"
-  height="500"
-  src="https://stackblitz.com/edit/angular-ivy-6ckg5o?file=src/app/banner/banner.component.ts"
-></iframe>
-
-#### Code explanation
-
-Here, we forked the first example and made changes on top of that.
-
-- We made it dynamic.
-- We added some properties in the class file, and bound them to template.
-- We interacted with the Call to action button and updated the class
-- we made 2 way binding using a built in `[(ngModel)]` syntax.
-- Note: To get this feature, make sure, we need to register the `FormsModule` which we have imported from respective namespaces.
 - like this:
 
 ```js
@@ -96,33 +34,12 @@ import { FormsModule } from '@angular/forms';
 
 - by registering the same within `imports:[]` array, we unlock all the features provided by the forms module.
 - we also made the button dynamically disabled using the property binding
-
-```
-[disabled]="!options.description"
-```
-
 - so whenever the description is empty, the Accept button is disabled.
 
-### Another option for [(ngModel)] 📚
+### Another option / variation for [(ngModel)] 📚
 
-[Example here](https://stackblitz.com/edit/angular-ivy-2ysqax?file=src/app/banner/banner.component.html)
+[Example here](https://stackblitz.com/edit/ngdocs-01-uva4zf?file=src%2Fapp%2Fapp.component.html)
 
 - The only difference is that, we bind to the `input` event of textarea
 - `$event` is a reserved keyword that passes the whole event object into the handler method
-
-```js
-<div class="text-center">
-  <div>Type in the description here:</div>
-  <textarea (input)="handleInput($event)"></textarea> /* 👈 this needs to be $event itself */
-</div>
-```
-
-and in the class file
-
-```
-handleInput(event) {
-    this.options.description = event.target.value;
-}
-```
-
-so every time, we type in a new character, it is kept in sync by assigning the target value to the object's description property.
+- so every time, we type in a new character, it is kept in sync by assigning the target value to the option object's description property.

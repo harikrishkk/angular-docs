@@ -1,22 +1,29 @@
 # Angular ❤️
 
-What exactly is angular ? It is a framework from google. And by framework, we get a set of rules & regulations to be followed for th application to work correctly. In terms of how to write the code, how to structure the code, we have rules. No matter what, a newbie, an experienced developer, all need to follow the same which is considered as the **pro & con** ( _depending on how we see it_ ). Angular allows us to build reactive SPAs.
+What exactly is angular ? It is a framework from google for creating reactive single page web apps. 
+And by framework, we get a set of rules & regulations to be followed for the application to work correctly. 
 
-#### What is a SPA by the way?
+This means, we are bound by rules on:
+- how to write the code, 
+- how to structure the code, 
 
-A Single Page App or SPA is that application where the initial request to a server brings back a single `index.html` along with some css & javascript initially to get the application up and running. That HTML is just a wrapper that contains a placeholder within which the whole app is rendered. We no longer move from page to page, but we swap components within a placeholder, also called "_router outlets_" ( more on it later )
+No matter what, a newbie, an experienced developer, all need to follow the same rules.
 
-#### What about versions?
+### What is a SPA by the way?
+
+A Single Page App or SPA is that application where the initial request to a server brings back a single `index.html` along with some css & javascript initially to get the application up and running. That HTML is just a wrapper that contains a placeholder within which the whole app is rendered. We no longer move from page to page, but we swap components within a placeholder, also called "_router outlets_" . In a SPA, the page never refreshes. Javacript is much faster than having to reach out to server for each requests and respond with a fresh HTML that the browser needs to repaint. With javascript, we can make ajax request for only those data which we need and can populate the UI with that data dynamically. Inspect the Page source and see the actual HTML content initially. It will be just a shell with some minimal HTML, CSS, Javascript and a placeholder div within which the application will be mounted eventually.
+
+### What about versions?
 
 Angular JS or Angular 1x was the old version that eventually was laid to rest.
 By 2016, the core team wrote a new framework called "**Angular**" by making use of ES6 and Typescript.
-They started releasing new features and bugfixes with each new version. For internal reasons, there is no version 3. Right now, every 6 months, there is a new version getting released. at the point of writing, we are at angular 15. As with every framework, angular is also evolving & improving and with that, comes changes. Some features will be deprecated, some features will be improved and some features will be polished. It is called just Angular because angular can be written not just with Javascript, but also with another programming language called "Dart". So calling it "AngularJS" is no longer justified.
+They started releasing new features and bugfixes with each new version. For internal reasons, there is no version 3. Right now, every 6 months, there is a new version getting released. at the point of writing, we are at angular 16. As with every framework, angular is also evolving & improving and with that, comes changes. Some features will be deprecated, some features will be improved and some features will be polished. It is called just Angular because angular can be written not just with Javascript, but also with another programming language called "Dart". So calling it "AngularJS" is no longer justified.
 
-#### How about comparing that with React ?
+### How about comparing that with React ?
 
 Comparing with other framework like react, the difference is that, React is just a view library, and the choice of mixing and matching other aspects of SPA is left to developers.
 
-#### For react, the options are more
+### For react, the options are more
 
 - Testing ( we have lots of libraries like RTL, Jest, Mocha, chai, enzyme, cypress etc)
 - Routing ( react router, reach router )
@@ -25,30 +32,29 @@ Comparing with other framework like react, the difference is that, React is just
 - Animation ( Framer, react spring, remotion)
 - Huge community support & tons of npm packages & libraries for virtually any requirements
 
-#### Okay, so if that is the case, why angular then?
+### Okay, so if that is the case, why angular then?
 
-As I said earlier, it is a framework. So everything required to build large scale enterprise apps are already made available in framework. We dont need to pick and choose the ones we need, that is already done for us by the framework. When building large scale apps, having rules are good. It helps the project with structure & scaling.
+As I said earlier, it is a framework. So everything required to build large scale enterprise apps are already made available in framework. We dont need to pick and choose the ones we need, that is already done for us by the framework. When building large scale apps, having rules are good. It helps the project with structure & scaling, especially when dozens of developers of various expertise levels work collaboratively in the same code.
 
-## What are the pre requisites?
+### What are the pre requisites?
 
 - Node Js in your computer to be pre installed.
+- Knowledge of Javascript, ES6 & Typescript ( must ) & SPA basics
 - Git ( optional )
-- Knowledge of ES6 & Typescript ( must ) & SPA basics
-- Decent knowledge of Javascript
 - An IDE ( VSCode is free )
 - Chrome browser ( preferrably )
-- I recommend going through the docs in order as they are arranged based on complexity of concepts
-- If you just want to know specific topics, feel free to jump straight to them.
+- Angular dev tools / augury extension from chrome extensions optionally.
 
-#### Note 🚀
+### Typescript 
 
-If anyone is trying to learn angular without knowing Javascript basics, at some point, it will bite you back.
-A lot of concepts will become much more clearer only when you have the basics right. So focus on that first.
+- is a superset of Javacript
+- gives classes, interfaces, enum, strong typing
+- we define the type and typescript helps to attach that type to a property and track them. 
+- The code is checked at the time we write them & not when running, so the error is caught while writing itself & not after building and running the same in browser.
+- It doesnt run in browser, so it needs to be compiled.
+- It needs to be compiled to Javascript, & is taken care of by the CLI behind scenes.
+- JS files supports sourcemaps which allow to map the JS files to TS files in browser.
+- To debug, go to Source -> Under webpack -> src -> Access all files to put debugger.
 
-This whole documentation is written keeping interview preperations in mind. ( while preparing for interviews ) Wherever you see
-this icon ( 📚), think of that as a potential interview question.
 
-#### Optional!
 
-🙏 If you like to support this page & my work, and if this documentation has helped you understand concepts & fundamentals, or helped you crack an interview , or if you wish to see more advanced concepts, ☕ [buying me a Coffee](https://www.buymeacoffee.com/harikrishkk) is much appreciated!
-( It is scientifically proven that caffiene is good for developers to stay awake & alive. )

@@ -20,15 +20,8 @@ p {
 }
 ```
 
-[Stackblitz code](https://stackblitz.com/edit/angular-ivy-2yxzrr?file=src/app/card/card.component.ts)
+[Stackblitz code](https://stackblitz.com/edit/ngdocs-05-2a2ats?file=src%2Fapp%2Fapp.component.html)
 
-#### Stackblitz Embed
-
-<iframe
-  width="100%"
-  height="500"
-  src="https://stackblitz.com/edit/angular-ivy-2yxzrr?file=src/app/card/card.component.ts"
-></iframe>
 
 #### Explanation
 
@@ -45,11 +38,13 @@ p[_ngcontent-vaq-c44] {
 ```
 
 the selector changed. Angular has added a random attribute making it more specific. This is intentional.
-A component shields itself from outside styles so as they are not acceidentally overwritten.
+A component shields itself from outside styles so as they are not accidentally overwritten.
 
 if we put
 
 ```js
+  import { ViewEncapsulation } from '@angular/core';
+  
   @Component({
   selector: 'app-card',
   templateUrl: './card.component.html',
@@ -70,5 +65,6 @@ Other options are
 #### What is a shadow DOM
 
 Think of it as a DOM within a DOM, but specific to that element.
-Think of it as a gated house within a community.
+Think of it as an island within which there are smaller isolated areas of land.
 The component's view is enclosed within ShadowRoot, and the styles are isolated to that portion of DOM
+Think of a small region within the whole DOM within which the component's view is embedded. Whatever styles the component has, is only active within that specific area.

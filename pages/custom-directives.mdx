@@ -1,0 +1,169 @@
+# Custom Directives 
+
+Building our own custom directives.
+
+The basic structure looks like this. 
+
+```js
+import { Directive, ElementRef, OnInit } from '@angular/core';
+
+@Directive({
+  selector: '[appHighlight]',
+})
+export class HighlightDirective implements OnInit {
+  constructor(private elementRef: ElementRef) {}
+
+  ngOnInit(): void {
+    // gives access to the native DOM element and change its background color 
+    this.elementRef.nativeElement.style.backgroundColor = 'orange';
+  }
+}
+```
+and we need to register within the `declarations:[]` and add it to the element
+
+```
+<h1 appHighlight>Custom Directive</h1>
+```
+
+- Direct Dom access isnt recommended.
+- We can use the renderer to grab DOM the angular way.
+
+```js
+
+  constructor(private elementRef: ElementRef, private renderer: Renderer2) {}
+  this.renderer.setStyle(
+      this.elementRef.nativeElement,
+      'background-color',
+      'yellow'
+  );
+```
+
+### Why renderer?
+
+- Angular is not limited to running in browser. 
+- It works with service workers.
+- If we try to run the code in an environment that doesnt support it, app throws error.
+
+### HostListener & HostBinding
+
+With HostListener, we can listen to any events happening in the element 
+
+```js
+  @HostListener('mouseenter') mouseover() {
+    this.renderer.setStyle(
+      this.elementRef.nativeElement,
+      'background-color',
+      'yellow'
+    );
+  }
+
+  @HostListener('mouseleave') mouseleave() {
+    this.renderer.setStyle(
+      this.elementRef.nativeElement,
+      'background-color',
+      'orange'
+    );
+  }
+  
+  // detect click anywhere in the DOM 
+  @HostListener('document:click', ['$event']) toggleOpen(event: Event) {
+    this.isOpen = this.elRef.nativeElement.contains(event.target) ? !this.isOpen : false;
+  }
+```
+If we need to conditionally attach / detach attributes like class, style etc, we use HostBinding, 
+which is nothing but "binding to the host element's property"
+
+```js
+@HostBinding('class.boxShadow') isHover = false;
+// Just like class, style can be set -> style.backgroundColor 
+
+@HostListener('mouseenter') mouseover() {
+  this.isHover = true;
+}
+
+@HostListener('mouseleave') mouseleave() {
+  this.isHover = false;
+}
+```
+
+### To pass in custom values & alias
+
+```js
+@Input() default = 'green';
+@Input() highlighted = 'pink';
+
+@HostListener('mouseenter') mouseover() {
+    this.renderer.setStyle(
+      this.elementRef.nativeElement,
+      'background-color',
+      this.default
+    );
+  }
+
+  @HostListener('mouseleave') mouseleave() {
+    this.renderer.setStyle(
+      this.elementRef.nativeElement,
+      'background-color',
+      this.highlighted
+    );
+  }
+```
+and use them as 
+
+```html 
+<h1 appHighlight [default]="'blue'" [highlighted]="'gold'">Custom Directive</h1>
+```
+
+For alias values 
+
+```js 
+@Input('appHighlight') highlighted = 'pink';
+```
+and we bind the value directly to the directive
+
+```html
+<h1 [appHighlight]="'gold'" [default]="'blue'">Custom Directive</h1>
+```
+[Example here](https://stackblitz.com/edit/angular-ivy-mdmbqf?file=src%2Fapp%2Fhighlight.directive.ts)
+
+### Behind scenes - Structural directives 
+
+Angular transforms the structural directives (eg: `*ngIf` ) into 
+
+```
+<ng-template [ngIf]="condition">
+ 
+</ng-template>
+```
+
+### Custom structual directive 
+
+```js
+import { Directive, ElementRef, OnInit } from '@angular/core';
+
+@Directive({
+  selector: '[appUnless]',
+})
+export class UnlessDirective implements OnInit {
+  @Input() set appUnless(condition: boolean) {
+   if(!condition) {
+     this.vcRef.createEmbeddedView(this.templateRef) 
+   } else {
+      this.vcRef.clear()
+   }
+  }
+  constructor(private templateRef: TemplateRef<any>, private vcRef: ViewContainerRef) {
+
+  }
+}
+```
+and use it as `<div *appUnless="condition"> </div>`
+
+### Explanation
+
+Since we need to conditionally add / remove from DOM, we need access to the view container, which is the div into which the content will be added/removed, for which we use the `ViewContainerRef`
+To pass in the template that is inserted, we need to have access to the template which we grab via `TemplateRef`.
+
+eg: If we need to put apples into the basket or pick apple from the basket, 
+- ViewContainerRef is the basket 
+- TemplateRef is the apple.

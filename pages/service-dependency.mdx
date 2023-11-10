@@ -1,0 +1,87 @@
+# Service & Dependency Injection
+
+### Why do we need a service? 
+
+If there is duplication of code and need to share non ui logic / business logic, services are good.
+We put certralized shareable code within services. When it comes to pass data around, services help us with the same.
+
+A service is just a typescript class. 
+We decorate it with `@Injectable` to mark it as a service. Its optional. We only need to add this if we have a constructor and a dependency within.
+Using `providedIn: 'root'` makes it tree shakeable / lazy loaded. 
+We dependency inject them into other classes to get an instance of it. ( or provide the service )
+We need to register them within the module if we havent provided the `providedIn` option.
+
+### Alternate way to do injection 
+
+```js 
+import { inject } from '@angular/core'; 
+ 
+@Component(...)
+export class AccountComponent {
+  
+  private loggingService?: LoggingService; 
+ 
+  constructor() {
+    this.loggingService = inject(LoggingService);
+  }
+}
+```
+
+### Hierarchial Injector 
+
+If we provide a service at one level, then angular knows to create an instance for this component and all its children.
+The whole hierarchy gets the same instance of the service. 
+A service needs to be "provided" by registering in any of the 3 possible places.
+
+### Hierarchy of injection
+
+- can be done at multiple levels
+- First, it can be at AppModule's `providers: []` array. The same instance of service is available app-wide. All component, directives & other services. 
+- Second, it can be at the AppComponent's `providers: []` option. Same instance is available for all AppComponent & its child components, but not for other services. Instances doesnt propogate up, but only down.
+- Third, it can at any component's configuration where we have the `providers: []` option. This component & its child have its own instance.
+
+- The order of registering the service is important. 
+
+
+[Example here](https://stackblitz.com/edit/angular-ivy-nmz6ac)
+
+### Note: 
+
+If we need to inject services into services, then the `@Injectable` decorator metadata is a must for the service who receives the dependency injection.
+Else, the decorator is optional. But, it is recommended to always use the decorator.
+Note: For injecting a service into another service, we need to register them at the AppModule level. Compoennt level wont work. 
+
+### Usage of services 
+
+Services can be used for cross component communication instead of doing the prop-drill where the data and events are passed one level down each time. 
+For that, we need an EventEmitter (emit & subscribe) to be used to hold the data as well as emit the data to the components.
+Subject, BehaviorSubject (next & subscribe ) are both used for this.
+
+[Cross communication example here](https://stackblitz.com/edit/angular-ivy-1cjt1i?file=src%2Fapp%2Fapp.component.html)
+
+To provide app wide services, we can use "providedIn":  root as the configuration property which is exactly same as providing them at AppModule. 
+The added advantage being, services can be lazy loaded & redundant code can be removed automatically. This leads to better performance & loading speed. Though this only kicks in bigger services & apps in general. 
+
+
+```js
+@Injectable({providedIn: 'root'})
+
+export class MyService { 
+
+}
+
+```
+
+
+Same example with Subject 
+
+[Example here](https://stackblitz.com/edit/angular-ivy-yettvr?file=src%2Fapp%2Flog.service.ts)
+
+### Question: 
+
+Is it okay to expose the emit method to the component? No, because, it gives free access to the consumer component to push whatever it likes. Sometimes it can be boolean, sometimes, an object or a collection
+To avoid such situations, it is better to encapsulate the same in service and expose a method that handles the same for us.
+By encapsulating the Subject/BehaviorSubject/EventEmitter, we restrict the usage within the service and expose regular methods which accepts the desired input value.
+
+[Example here](https://stackblitz.com/edit/angular-ivy-n7kzmk?file=src%2Fapp%2Flog.service.ts)
+

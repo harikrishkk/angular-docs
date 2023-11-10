@@ -1,0 +1,40 @@
+# Ngrx 
+
+- State management system / library
+- 3rd party library created by same team 
+- A package, that helps manage app wide state 
+- Complex apps.
+- State changes over time 
+- Instead of managing state in components & services, we manage them outside of them.
+- Clearly defined approach to manage state 
+- Store is a centralized virtual javascript object, where data is stored & managed. Component reads data from store & can listen to changes in store.
+- Selectors can help get respective slices for component 
+- To change data, dispatch actions to store which is picked up by reducer who mutates state for the store.
+- Effects are side effects ( anything async is handled here, like HTTP requests )
+
+### Install ngrx 
+
+```js 
+ng add @ngrx/store  // downloads, installs & updates the module 
+
+```
+
+[Example](https://stackblitz.com/edit/angular-ivy-qkfvyq?file=src%2Fapp%2Fcomponents%2Fcounter%2Fcounter.component.ts)
+
+
+### Selectors 
+
+[Example](https://stackblitz.com/edit/angular-ivy-xq5tij?file=src%2Fapp%2Fstore%2Fcounter.selector.ts)
+
+### Book example 
+
+[Example](https://stackblitz.com/edit/angular-ivy-bzq956?file=src%2Fapp%2Fcomponents%2Fhome-page%2Fhome-page.component.html)
+
+### Effects 
+
+- side effects
+- anything that is not directly related to Ui update 
+- avoid them in reducers, which should be pure. 
+- `ng add @ngrx/effects`
+
+[Full fledged example in Github](https://github.com/harikrishkk/angular-ngrx)

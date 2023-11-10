@@ -1,0 +1,40 @@
+# Life cycle hooks
+
+- There are certain methods that angular calls.
+- ngOnChanges(changes: SimpleChanges) – multiple times executed, first at start & then also when bound @Input changes.
+- ngOnInit - called just once the component is initialized.
+- ngDoCheck –  called on each change detection run
+- ngAfterContentInit – the projected content via ng-content has been initialized,
+- ngAfterContentChecked – run every time the projected content is checked
+- ngAfterViewInit – Called after component’s view & its child’s view has been initialized.
+- ngAfterViewChecked – run every time the view content is checked
+- ngOnDestroy – once component unmounts, cleanup work. 
+
+### Change detection
+
+Change detection is a system by which angular determines whether something within the component is changed or not and because of which the template needs to be re-rendered or not.
+
+[Example here](https://stackblitz.com/edit/ngdocs-08)
+
+### Change detection strategy
+
+
+Change detection strategy is a mechanism by which angular decides if it should update the view of the component. It has 2 options ( Default & OnPush )
+
+By default, angular checks all compoennts & its children in the hierarchy for changes, whenever an event occurs or data is updated. This means, even if a property or data hasnt changed, angular still checks & updates the view if change detection runs. It leads to unnecessary performance overhead. With this strategy, angular ensures that view is always upto date even if it needs to check more frequently.
+
+With OnPush, we can optimize the performance of the application further. It is designed to reduce the number of unnecessary change detection cycles. It is not always "dirty checked".
+
+Here, angular only performs a change detection cycle on a component & its children only if:
+
+- @Input property of the component is changed.
+- event is triggered from component or its children.
+- Assumes that component state is stable & hasnt changed if its input properties hasnt changed. 
+- async pipe receives a new event
+- explicitly trigger them by `ChangeDetectorRef::markForCheck`
+
+It requires more careful handling of state & data flow. 
+
+[Example here](https://stackblitz.com/edit/ngdocs-08-faeggw?file=src%2Fapp%2Fuser%2Fuser.component.ts)
+
+Now, uncomment the `ChangeDetection` and run again. What difference will you see, and how to make it working again?

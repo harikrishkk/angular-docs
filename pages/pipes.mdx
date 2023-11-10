@@ -1,0 +1,29 @@
+# Pipes 
+
+- Allows to transform output in the template. 
+
+[Example](https://stackblitz.com/edit/angular-ivy-waegqk?file=src%2Fapp%2Fapp.component.html)
+
+### Pure & impure pipes 
+
+We loop over a collection to show some item. We have an input which filters them.
+Whatever user typed is filter string. We need to iterate over array and check if an object with that string filter exists.
+Filtering works, but if we add a new item while filter is applied, it wont be applied to the filter. 
+It is not a bug. It is intentional. Angular doesnt rerun the pipe on the data whenever the data changes.
+Changing the pipe input triggers a recalculation, but changing data doesnt.
+Else angular would need to re-run the pipe when any data on the page changes, which costs performance. To force it to do otherwise, set pure to false.
+
+[Example](https://stackblitz.com/edit/angular-ivy-mh2u8p?file=src%2Fapp%2Fapp.component.html)
+
+```js
+@Pipe({
+  name: 'filter',
+  pure: false
+})
+
+```
+
+### Async pipe 
+
+- Can be used by having a ` myData$ | async ` if we need to subscribe to an observable and pull the value of it without explicit subscriptions.
+

@@ -1,0 +1,15 @@
+# Signals
+
+- Added with Angular 16 as a developer preview.
+- Likely to be stable by 17 
+- A new way of handling data changes & UI updates.
+- Without this, angular relies on classic change detection. ( zone.js )
+- In a traditional app, data is changed by setting properties & updating them. Changes are detected automatically with classic approach.
+- Downside - Performance could be better, and bundle size needs to be decreased.
+- Alternate way of detecting changes without extra library.
+- Stop watching the entire app. There is no automatic change detection, and we as a developer, tell angular when data changes, and where its used in UI.
+- Full control, better performance, smaller bundle. With 16, we cannot fully switch to signals.
+- To get the full benefits, we need an app that runs fully on signals. 
+- As of now, signals are brand new and needs a few more releases to be stable and evolve fully.
+
+[Example](https://stackblitz.com/edit/stackblitz-starters-bk7jue?file=src%2Fmain.ts)

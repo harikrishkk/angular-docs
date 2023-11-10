@@ -1,0 +1,51 @@
+# Stand alone components 
+
+- Idea is to work without modules.
+- Introduced in Angular 14+
+- Its introduced in Preview mode for V14. So the syntax can change later. With V15, its stable. 
+- That doesnt mean, we should use this in production ready apps.
+
+- Standard apps have one problem - Boilerplate code.
+- It makes refactoring painful.
+- Angular modules help organize & structure the code, but it comes with its own boilerplates.
+- To get rid of ngModules, angular brought Standalone modules.
+
+[Example](https://stackblitz.com/edit/stackblitz-starters-ag5ado?file=src%2Fmain.ts)
+
+The new mode ( in preview ) can be mixed with old way.
+
+- In a regular component, add special flag `standalone: true` to the configuration of component.
+- If we mark a component as standalone, then do not register the component in any modules.
+- We must still let angular know of this component. 
+- Go to the component where this component is used, add imports: [DetailsComponent]
+- or go to the AppModule, instead of adding the stand alone components to declarations, we add it to imports.
+- StandAlone directive is possible. ( standalone: true )
+- In stand alone component, we can add imports: [SharedModule] 
+- In AppComponent, if we add standalone to true, which is the root component,  we need to change the main.ts to point to the component.
+
+```js
+// platform browser 
+bootstrapApplication(AppComponent, {
+  providers: [
+    // AnalyticsService,
+    importProvidersFrom(AppRoutingModule)
+  ],
+
+})
+```
+
+Services:
+
+- We have providedIn root set to service. If not, we can add a providers: [] within component decorator. But we wont get same instance then. 
+- Register the services within the bootstrapApplication as above if we have not used providedIn root.
+
+Routing :
+
+- We need to let application / app component know about router module.
+- imports: [RouterModule] within the component configuration, also, RoutingModule needs to be registered.
+- We add lazy loading as well.
+
+[Example](https://stackblitz.com/edit/stackblitz-starters-ag5ado?file=src%2Fmain.ts)
+
+Right now, this is just an alternative. Angular has not highlighted this as the default recommended way.
+
